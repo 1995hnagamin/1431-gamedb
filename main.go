@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	"fmt"
 	"io/fs"
 	"net"
 	"net/http"
@@ -12,6 +13,10 @@ import (
 //go:embed assets/*
 var assets embed.FS
 
+func indivHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, `["apple", "banana", "cherry"]`)
+}
+
 func startServer() string {
 	root, err := fs.Sub(assets, "assets")
 	if err != nil {
@@ -19,6 +24,8 @@ func startServer() string {
 	}
 
 	mux := http.NewServeMux()
+
+	mux.HandleFunc("/api/indiv/", indivHandler)
 
 	hfs := http.FileServer(http.FS(root))
 	hfsprefix := "/view/"
