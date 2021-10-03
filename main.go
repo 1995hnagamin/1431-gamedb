@@ -10,15 +10,15 @@ import (
 	"github.com/webview/webview"
 )
 
-//go:embed assets/*
-var assets embed.FS
+//go:embed web/dist/*
+var embedded embed.FS
 
 func indivHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, `["apple", "banana", "cherry"]`)
 }
 
 func startServer() string {
-	root, err := fs.Sub(assets, "assets")
+	root, err := fs.Sub(embedded, "web/dist")
 	if err != nil {
 		panic(err)
 	}
