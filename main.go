@@ -3,6 +3,7 @@ package main
 import (
 	"embed"
 	"io/fs"
+	"net"
 	"net/http"
 
 	"github.com/webview/webview"
@@ -11,7 +12,7 @@ import (
 //go:embed assets/*
 var assets embed.FS
 
-func app() {
+func startServer() string {
 	root, err := fs.Sub(assets, "assets")
 	if err != nil {
 		panic(err)
@@ -19,21 +20,25 @@ func app() {
 
 	mux := http.NewServeMux()
 	mux.Handle("/", http.FileServer(http.FS(root)))
-	server := &http.Server{
-		Addr:    "127.0.0.1:8080",
-		Handler: mux,
+	listener, err := net.Listen("tcp", ":0")
+	if err != nil {
+		panic(err)
 	}
-	server.ListenAndServe()
+	go func() {
+		panic(http.Serve(listener, mux))
+	}()
+
+	return listener.Addr().String()
 }
 
 func main() {
-	go app()
+	addr := startServer()
 
 	debug := true
 	w := webview.New(debug)
 	defer w.Destroy()
 	w.SetTitle("1431 Game Database")
 	w.SetSize(800, 600, webview.HintNone)
-	w.Navigate("http://127.0.0.1:8080/index.html")
+	w.Navigate("http://" + addr + "/")
 	w.Run()
 }
