@@ -1,6 +1,13 @@
 package main
 
-import "github.com/webview/webview"
+import (
+	_ "embed"
+
+	"github.com/webview/webview"
+)
+
+//go:embed static/index.html
+var indexHtml string
 
 func main() {
 	debug := true
@@ -8,6 +15,6 @@ func main() {
 	defer w.Destroy()
 	w.SetTitle("1431 Game Database")
 	w.SetSize(800, 600, webview.HintNone)
-	w.Navigate("https://en.m.wikipedia.org/wiki/Main_Page")
+	w.Navigate(`data:text/html,` + indexHtml)
 	w.Run()
 }
