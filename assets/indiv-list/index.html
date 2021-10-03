@@ -6,6 +6,10 @@
   <title>1431 Game Database</title>
 </head>
 <body>
-  <a href="/view/indiv-list/">indiv</a>
+  <div id="indiv-list"></div>
+  <script>
+    const href = new URL(window.location.href);
+    document.getElementById("indiv-list").innerHTML = href.origin;
+  </script>
 </body>
 </html>
