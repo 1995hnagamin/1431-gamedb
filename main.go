@@ -19,7 +19,11 @@ func startServer() string {
 	}
 
 	mux := http.NewServeMux()
-	mux.Handle("/", http.FileServer(http.FS(root)))
+
+	hfs := http.FileServer(http.FS(root))
+	hfsprefix := "/view/"
+	mux.Handle(hfsprefix, http.StripPrefix(hfsprefix, hfs))
+
 	listener, err := net.Listen("tcp", ":0")
 	if err != nil {
 		panic(err)
@@ -39,6 +43,6 @@ func main() {
 	defer w.Destroy()
 	w.SetTitle("1431 Game Database")
 	w.SetSize(800, 600, webview.HintNone)
-	w.Navigate("http://" + addr + "/")
+	w.Navigate("http://" + addr + "/view/")
 	w.Run()
 }
